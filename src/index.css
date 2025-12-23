@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f8fafc; /* Light gray background */
+  color: #0f172a; /* Dark text */
+}
+/* --- METALLIC BUTTON EFFECT --- */
+
+@property --gradient_rotate {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.metallic-btn {
+  /* Variables */
+  --gradient_rotate: 0deg;
+  
+  /* Metallic Palette */
+  --metal_01: rgb(200 200 220);
+  --metal_02: rgb(160 160 180);
+  --metal_03: rgb(120 120 140);
+  --metal_04: rgb(080 080 100);
+  --metal_05: rgb(040 040 060);
+  --metal_06: rgb(010 010 010);
+
+  position: relative;
+  /* STATIC BACKGROUND: This sits on top of the spinner */
+  background: linear-gradient(180deg, #334155, #0f172a); 
+  border: none; /* We use the pseudo-element for the border now */
+  border-radius: 9999px; 
+  z-index: 0; /* Important: Establishes a stacking context */
+  
+  /* Smooth hover scaling */
+  transition: transform 0.2s;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+.metallic-btn:hover {
+  transform: scale(1.02);
+}
+
+.metallic-btn:active {
+  transform: scale(0.98);
+}
+
+/* THE SPINNING BORDER LAYER */
+.metallic-btn::before {
+  content: "";
+  position: absolute;
+  /* This negative value controls Border Thickness (3px) */
+  inset: -3px; 
+  z-index: -1; /* Puts it BEHIND the static button background */
+  border-radius: inherit;
+  
+  /* The Spinning Gradient */
+  background: conic-gradient(from var(--gradient_rotate),
+      rgb(from var(--metal_01) r g b / 0.5),
+      rgb(from var(--metal_01) r g b / 0.0),
+      rgb(from var(--metal_06) r g b / 0.0),
+      rgb(from var(--metal_06) r g b / 1.0),
+      rgb(from var(--metal_04) r g b / 0.5),
+      rgb(from var(--metal_04) r g b / 0.0),
+      rgb(from var(--metal_04) r g b / 1.0),
+      rgb(from var(--metal_01) r g b / 0.5));
+
+  animation: button_gradient_rotate 4s linear infinite;
+}
+
+/* Optional: A static inner shadow to make the border look deeper */
+.metallic-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  z-index: 1; /* Sits on top of the background image but below text */
+  pointer-events: none;
+}
+
+.metallic-btn:disabled {
+  opacity: 0.7;
+  filter: grayscale(1);
+  cursor: not-allowed;
+}
+
+.metallic-btn:disabled::before {
+  animation: none;
+}
+
+@keyframes button_gradient_rotate {
+  from { --gradient_rotate: 0deg; }
+  to   { --gradient_rotate: 360deg; }
+}
+/* Page Transition Animation */
+body {
+  background-color: #f8fafc; /* Prevents harsh white flash */
+  overflow-x: hidden;
+}
+
+.animate-page {
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
